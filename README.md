@@ -6,13 +6,26 @@ It uses Log4j 2.14.1 (through `spring-boot-starter-log4j2` 2.6.1) and the JDK 1.
 
 ![](./screenshot.png)
 
+## I forked the original repo: what I changed?
+- Write script to run SCAN with OWASP Dependency-Check and trivy.
+- Updated the README.md to make it more user friendly.
+- Changed the Dockerfile to use a more recent base image (openjdk:8-jdk
+
 ## Running the application
+Oblviously, you should run this application in a safe environment, such as a VM or a Docker container, as it is intentionally vulnerable.
+The easiest way to run the vulnerable application is to use the provided Docker image.
+
+Build it:
+```bash
+docker build -t log4shell-app:latest .
+```
 
 Run it:
-
-```bash
-docker run --name vulnerable-app --rm -p 8080:8080 ghcr.io/christophetd/log4shell-vulnerable-app@sha256:6f88430688108e512f7405ac3c73d47f5c370780b94182854ea2cddc6bd59929
+```shell
+docker run --rm -p 8080:8080 --name log4shell-app log4shell-app:latest
 ```
+
+## 
 
 ## Exploitation steps
 
@@ -23,11 +36,6 @@ docker run --name vulnerable-app --rm -p 8080:8080 ghcr.io/christophetd/log4shel
 
 * Use [JNDIExploit](https://github.com/feihong-cs/JNDIExploit/releases/tag/v1.2) to spin up a malicious LDAP server
 
-```bash
-wget https://github.com/feihong-cs/JNDIExploit/releases/download/v1.2/JNDIExploit.v1.2.zip
-unzip JNDIExploit.v1.2.zip
-java -jar JNDIExploit-1.2-SNAPSHOT.jar -i your-private-ip -p 8888
-```
 
 * Then, trigger the exploit using:
 
@@ -61,12 +69,36 @@ pwned
 ...
 ```
 
+## Software Composition Analysis (SCA) Scans
+You can run the following commands to perform SCA scans using OWASP Dependency-Check and Trivy.
+
+### 1. OWASP Dependency-Check
+To run the OWASP Dependencie Check scans, execute the following command in the terminal:
+```shell
+./sca_owasp_dependency_check.sh
+```
+It will generate a report in the `./sca-odc-reports` directory.
+
+![report_owasp_dependency_check.png](report_owasp_dependency_check.png)
+
+### 2. Trivy
+To run the Trivy scans, execute the following command in the terminal:
+```shell
+./sca_trivy.sh
+```
+It will generate a report in the `./sca-trivy-reports` directory.
+
+![report_trivy.png](report_trivy.png)
+
 ## Reference
 
 https://www.lunasec.io/docs/blog/log4j-zero-day/
 https://mbechler.github.io/2021/12/10/PSA_Log4Shell_JNDI_Injection/
+https://trivy.dev/
+https://owasp.org/www-project-dependency-check/
 
 ## Contributors
 
 [@christophetd](https://twitter.com/christophetd)
 [@rayhan0x01](https://twitter.com/rayhan0x01)
+[@xcesco](https://x.com/xcescoz) 

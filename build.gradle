@@ -7,16 +7,26 @@ plugins {
 group = 'fr.christophetd.log4shell'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
+}
+
+ext {
+	// Forza l'uso di una versione vulnerabile di Log4j
+	log4jVersion = '2.14.1'
 }
 
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web') {
 		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 	}
-	implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.6.1'
+	// Usa esplicitamente Log4j 2.14.1 (vulnerabile)
+	implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+	implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+	implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
