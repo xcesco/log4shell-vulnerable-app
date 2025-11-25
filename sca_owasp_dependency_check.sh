@@ -23,12 +23,15 @@ fi
 # Make sure we are using the latest version
 docker pull owasp/dependency-check:$DC_VERSION
 
+# Run a temporary OWASP Dependency-Check Docker container to scan the current directory for vulnerabilities,
+# using local user permissions, mounting project and data volumes, generating all report formats,
+# and saving reports to the specified directory
 docker run --rm \
     -e user=$USER \
     -u $(id -u ${USER}):$(id -g ${USER}) \
     --volume $(pwd):/src:z \
-    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
-    --volume $REPORTS_DIRECTORY:/report:z \
+    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data \
+    --volume $REPORTS_DIRECTORY:/report \
     owasp/dependency-check:$DC_VERSION \
     --scan /src \
     --format "ALL" \
